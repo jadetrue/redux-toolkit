@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "immer": "^9.0.17",
     "redux": "^4.2.0"
   }
 }
