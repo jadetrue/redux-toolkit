@@ -1,11 +1,15 @@
 const redux = require("redux");
 const createStore = redux.createStore;
 const bindActionCreators = redux.bindActionCreators;
+const combinedReducers = redux.combineReducers;
 
 const CAKE_ORDERED = "CAKE_ORDERED";
 const CAKE_RESTOCKED = "CAKE_RESTOCKED";
 
-// An action creator is an function that returns and object
+const ICECREAM_ORDERED = "ICECREAM_ORDERED";
+const ICECREAM_RESTOCKED = "ICECREAM_RESTOCKED";
+
+// An action creator is an function that returns and object with action
 const orderCake = () => {
   return {
     type: CAKE_ORDERED,
@@ -20,12 +24,29 @@ const restockCake = (quantity = 1) => {
   };
 };
 
-const initialState = {
+const orderIceCream = (quantity = 1) => {
+  return {
+    type: ICECREAM_ORDERED,
+    payload: quantity,
+  };
+};
+
+const restockIceCream = (quantity = 1) => {
+  return {
+    type: ICECREAM_RESTOCKED,
+    payload: quantity,
+  };
+};
+
+const initialCakeState = {
   numOfCakes: 10,
+};
+const initialIceCreamState = {
+  numOfIceCreams: 20,
 };
 
 // Pure function that accepts state and action as arguments, returning new state
-const reducer = (state = initialState, action) => {
+const cakeReducer = (state = initialCakeState, action) => {
   switch (action.type) {
     case CAKE_ORDERED:
       return {
@@ -41,10 +62,31 @@ const reducer = (state = initialState, action) => {
       return state;
   }
 };
+const iceCreamReducer = (state = initialIceCreamState, action) => {
+  switch (action.type) {
+    case ICECREAM_ORDERED:
+      return {
+        numOfIceCreams: state.numOfIceCreams - 1,
+      };
+    case ICECREAM_RESTOCKED: {
+      return {
+        ...state,
+        numOfIceCreams: state.numOfIceCreams + action.payload,
+      };
+    }
+    default:
+      return state;
+  }
+};
+
+const routeReducer = combinedReducers({
+  cake: cakeReducer,
+  iceCream: iceCreamReducer,
+});
 
 // Creating our redux store:
 // The reducer function controls how the state changes
-const store = createStore(reducer);
+const store = createStore(routeReducer);
 // Log to the console the initial state
 console.log(`Initial state`, store.getState());
 
